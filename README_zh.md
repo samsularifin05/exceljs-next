@@ -1,17 +1,41 @@
-# ExcelJS
+# exceljs-next
 
-[![Build status](https://github.com/exceljs/exceljs/workflows/ExcelJS/badge.svg)](https://github.com/exceljs/exceljs/actions?query=workflow%3AExcelJS)
-[![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/exceljs/exceljs.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/exceljs/exceljs/context:javascript)
-[![Total Alerts](https://img.shields.io/lgtm/alerts/g/exceljs/exceljs.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/exceljs/exceljs/alerts)
+**语言 / Languages:** [English](README.md) | [Bahasa Indonesia](README_id.md) | **中文**
 
-读取，操作并写入电子表格数据和样式到 XLSX 和 JSON 文件。
+> **关于本仓库：**
+> [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) 是基于原版 [exceljs/exceljs](https://github.com/exceljs/exceljs)（自 2024 年 1 月 `v4.4.0` 后停止更新）长期维护与安全加固的分支版本。在完全保持原有 API 向后兼容的同时，修复了高危安全漏洞（`npm audit` **0 漏洞**）、Node.js 16–22+ 流式读取问题、Excel 文件损坏隐患，完善了 TypeScript 与原生 ESM 支持，并新增了多项实用特性。
+> 完整更新日志请查看 [CHANGELOG.md](CHANGELOG.md)。
 
-一个 Excel 电子表格文件逆向工程项目。
+[![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
+
+读取、操作并写入电子表格数据和样式到 XLSX、CSV 和 JSON 文件 —— 支持 Node.js `>=16.0.0`、原生 ESM、TypeScript 及浏览器环境。
+
+# 相比原版 `exceljs@4.4.0` 的核心改进
+
+* **全面安全加固（0 漏洞）：** 修复 `deepMerge`、`note`、`definedNames`、`cellMatrix`、`dataValidations` 与 `cfRule` 中的原型链污染；增加 `<mergeCell>` 与单元格坐标边界校验以防止内存溢出（OOM）；修复 CSV 原型属性查找；移除高危运行时依赖（`tmp`、`uuid` 改为内置实现）。
+* **文件级密码加密与解密（MS-OFFCRYPTO）：** 支持使用 AES-256-CBC + SHA-512 为 `.xlsx` 设置打开密码（`writeFile`/`writeBuffer` `{ password }`），并支持解密 Agile (`4.4`) 与 Standard (`3.2`/`4.2`) 加密的工作簿（`readFile`/`load` `{ password }`）。
+* **原生 Excel 图表（`ws.addChart()`）：** 支持 `column`、`bar`、`line`、`area`、`pie`、`doughnut` 图表，可自定义系列、颜色、数值轴格式、图例位置与数据标签（数值与百分比）。
+* **模板引擎（`renderTemplate()`）：** 支持 `{{placeholder}}` 占位符替换（含嵌套路径与富文本）及数组行自动循环扩展（`{{items.name}}`、`{{items.$number}}`），完整保留原有样式。
+* **JSON 快捷转换（`ws.fromJSON()` & `ws.toJSON()`）：** 直接从对象数组生成工作表，或将工作表内容导出为干净的 JSON 对象数组。
+* **自动列宽与自动行高：** 提供 `ws.autoFitColumns(options)` 与 `ws.autoFitRows(options)`（支持换行符、`wrapText` 自动折行及字体大小估算）。
+* **增强数据透视表（Pivot Tables）：** 支持同一工作簿内创建多个透视表、11 种聚合函数（`sum`、`count`、`average`、`max`、`min`、`product`、`countNums`、`stdDev`、`stdDevP`、`var`、`varP`）、多数值字段及 `sourceTable`。
+* **流式读写功能对齐：** `WorksheetWriter` 支持 `addTable()`、`addImage()`、扩展条件格式 `<extLst>` 与 `colBreaks`；`WorksheetReader` 支持解析 `mergeCells`。
+* **列分页符与工作簿结构保护：** 支持 `column.addPageBreak(top, bottom)`、`worksheet.colBreaks`、`await workbook.protect(password, options)` 与 `workbook.unprotect()`。
+* **Node.js 16–22+ 流式读取与 UTF-8 修复：** 修复现代 Node.js 下 `WorkbookReader` 提前结束丢失共享字符串的问题，以及多字节 UTF-8 字符跨分块截断乱码问题。
+* **原生 ESM 与完善 TypeScript 支持：** 新增 `excel.mjs` 与 `index.d.mts`，更新 `index.d.ts` 以完美兼容 CommonJS、ESM 与 `strict` 模式。
 
 # 安装
 
 ```shell
-npm install exceljs
+npm install exceljs-next
+# 或使用 pnpm
+pnpm add exceljs-next
+```
+
+或者作为无缝替代包安装（无需修改现有 `exceljs` 导入代码）：
+
+```shell
+npm install exceljs@npm:exceljs-next
 ```
 
 # 新的功能!

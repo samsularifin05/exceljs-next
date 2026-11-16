@@ -1,38 +1,75 @@
 # exceljs-next
 
+**Languages:** **English** | [Bahasa Indonesia](README_id.md) | [中文](README_zh.md)
+
 > **About This Repository:**
-> [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) merupakan *maintained fork* dari repositori asli [exceljs/exceljs](https://github.com/exceljs/exceljs) (yang terakhir dikembangkan pada Januari 2024 / `v4.4.0`). Fork ini dibuat untuk memperbaiki celah keamanan (*prototype pollution*, *DoS/OOM*, dan *dependency vulnerabilities*), memperbaiki bug pembacaan/penulisan file di Node.js modern (Node 18/20/22+), mencegah korupsi file Excel, menyempurnakan dukungan TypeScript & ESM, serta menambahkan fitur-fitur baru tanpa mengubah logic API yang sudah berjalan.
-> Lihat detail lengkap perubahan di [CHANGELOG.md](CHANGELOG.md).
+> [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) is a maintained, modernized, and security-hardened fork of the original [exceljs/exceljs](https://github.com/exceljs/exceljs) (inactive since `v4.4.0` in January 2024). It preserves 100% backward compatibility with the original API while fixing critical security vulnerabilities (`0` audit issues), Node.js 16–22+ streaming bugs, Excel file corruption issues, TypeScript & ESM support, and adding major new features.
+> See full release notes in [CHANGELOG.md](CHANGELOG.md).
 
 [![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
 
-Read, manipulate and write spreadsheet data and styles to XLSX and JSON.
-
-Reverse engineered from Excel spreadsheet files as a project.
+Read, manipulate and write spreadsheet data and styles to XLSX, CSV, and JSON — supporting Node.js `>=16.0.0`, Native ESM, TypeScript, and Browsers.
 
 # Highlights of Improvements Over Upstream `exceljs@4.4.0`
 
-* **Security Hardened (0 Vulnerabilities):** Fixed prototype pollution in `deepMerge`, `note`, `definedNames`, `cellMatrix`, `dataValidations`, and `cfRule`; added anti-OOM bounds checks on `<mergeCell>` and cell addresses; fixed CSV prototype property lookup; removed vulnerable runtime dependencies (`npm audit` reports **0 vulnerabilities**).
-* **Node.js 18/20/22+ Streaming Fixes:** Fixed `WorkbookReader` losing `sharedStrings` when `unzipper` ends early while paused, and fixed multi-byte UTF-8 character corruption across stream chunks.
-* **Enhanced Pivot Tables:** Support multiple Pivot Tables per workbook, 11 aggregation metrics (`sum`, `count`, `average`, `max`, `min`, `product`, `countNums`, `stdDev`, `stdDevP`, `var`, `varP`), multiple `values` columns, `sourceTable` support, XML special character escaping, and `null`/`undefined` cell handling.
-* **Streaming Writer & Reader Parity:** Support `addTable()`, `addImage()`, and extended conditional formatting (`dataBar`/`iconSet` `<extLst>`) in `WorksheetWriter`, plus `mergeCells` parsing in `WorksheetReader`.
-* **New Worksheet & Workbook Capabilities:**
-  * `worksheet.autoFitColumns(options)` — Auto-calculate column widths from cell contents, headers, and font size.
-  * `column.addPageBreak(top, bottom)` & `worksheet.colBreaks` — Full column page break support.
-  * `await workbook.protect(password, options)` & `workbook.unprotect()` — Workbook structure & window protection.
-* **Native ESM & Accurate TypeScript Definitions:** Added `excel.mjs` (`import ExcelJS, { Workbook } from 'exceljs-next'`) and updated `index.d.ts` to match runtime APIs.
+* **Security Hardened (0 Vulnerabilities):** Fixed prototype pollution in `deepMerge`, `note`, `definedNames`, `cellMatrix`, `dataValidations`, and `cfRule`; added anti-OOM bounds checks on `<mergeCell>` and cell addresses; fixed CSV prototype property lookup; replaced `tmp` and `uuid` with built-in Node.js `fs`/`crypto` (`0` `npm audit` vulnerabilities).
+* **File Encryption & Decryption (Password to Open — MS-OFFCRYPTO):** Encrypt `.xlsx` files with AES-256-CBC + SHA-512 (`writeFile`/`writeBuffer` `{ password }`) and decrypt Agile (`4.4`) & Standard (`3.2`/`4.2`) encrypted `.xlsx` files (`readFile`/`load` `{ password }`).
+* **Native Excel Charts (`ws.addChart()`):** Create native `column`, `bar`, `line`, `area`, `pie`, and `doughnut` charts with custom series, colors, `valAxis` number formatting, legend positioning, and `dataLabels` (values & percentages).
+* **Template Engine (`renderTemplate()`):** Fill `{{placeholder}}` variables (including nested paths & RichText) and automatically expand array loop rows (`{{items.name}}`, `{{items.$number}}`) while preserving template cell styles.
+* **JSON Helpers (`ws.fromJSON()` & `ws.toJSON()`):** Populate worksheets directly from arrays of objects and export worksheets back to clean JSON objects.
+* **Auto-Fit Column Widths & Row Heights:** `ws.autoFitColumns(options)` and `ws.autoFitRows(options)` (with multiline, `wrapText`, and font size calculation).
+* **Enhanced Pivot Tables:** Multiple Pivot Tables per workbook, 11 aggregation metrics (`sum`, `count`, `average`, `max`, `min`, `product`, `countNums`, `stdDev`, `stdDevP`, `var`, `varP`), multiple `values` columns, `sourceTable` support, and XML escaping.
+* **Streaming Writer & Reader Parity:** `addTable()`, `addImage()`, `<extLst>` conditional formatting, and `colBreaks` in `WorksheetWriter`, plus `mergeCells` parsing in `WorksheetReader`.
+* **Column Page Breaks & Workbook Structure Protection:** `column.addPageBreak(top, bottom)`, `worksheet.colBreaks`, `await workbook.protect(password, options)`, and `workbook.unprotect()`.
+* **Node.js 16–22+ Streaming & UTF-8 Fixes:** Fixed `WorkbookReader` dropping buffered zip entries in Node 18/20/22+ and fixed multi-byte UTF-8 character corruption across stream chunks.
+* **Native ESM & Full TypeScript Support:** Added `excel.mjs` (`import ExcelJS, { Workbook } from 'exceljs-next'`), `index.d.mts`, and updated `index.d.ts` for CommonJS, ESM, and `strict` TypeScript.
+
+### Quick Examples of New `exceljs-next` Features
+
+```ts
+import ExcelJS from 'exceljs-next';
+
+const workbook = new ExcelJS.Workbook();
+const ws = workbook.addWorksheet('Sales');
+
+// 1. Populate from JSON & Auto-fit columns/rows
+ws.fromJSON(
+  [
+    { product: 'Laptop Pro', qty: 2, revenue: 30000000 },
+    { product: 'Monitor 4K', qty: 4, revenue: 20000000 },
+  ],
+  { headerLabels: { product: 'Product', qty: 'Qty', revenue: 'Revenue' }, autoFit: true }
+);
+ws.autoFitRows({ minHeight: 18, padding: 4 });
+
+// 2. Add Native Excel Chart with percentage data labels
+ws.addChart({
+  type: 'doughnut',
+  title: 'Revenue Share',
+  range: 'E2:L16',
+  dataLabels: { showVal: true, showPercent: true },
+  series: [{ name: 'Revenue', categories: '$A$2:$A$3', values: '$C$2:$C$3' }],
+});
+
+// 3. Save with File-Open Password (MS-OFFCRYPTO AES-256)
+await workbook.xlsx.writeFile('report.xlsx', { password: 'Secret@2026' });
+```
 
 # Translations
 
+* **English** (this file)
+* [Bahasa Indonesia](README_id.md)
 * [中文文档](README_zh.md)
 
 # Installation
 
 ```shell
 npm install exceljs-next
+# or with pnpm
+pnpm add exceljs-next
 ```
 
-Atau sebagai *drop-in replacement* tanpa perlu mengubah kode `require('exceljs')` / `import ... from 'exceljs'` yang sudah ada:
+Or install as a drop-in alias without changing existing `exceljs` imports:
 
 ```shell
 npm install exceljs@npm:exceljs-next

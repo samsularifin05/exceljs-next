@@ -4,7 +4,7 @@
 
 > **About This Repository:**
 > [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) is a maintained, modernized, and security-hardened fork of the original [exceljs/exceljs](https://github.com/exceljs/exceljs) (inactive since `v4.4.0` in January 2024). It preserves 100% backward compatibility with the original API while fixing critical security vulnerabilities (`0` audit issues), Node.js 16–22+ streaming bugs, Excel file corruption issues, TypeScript & ESM support, and adding major new features.
-> See full release notes in [CHANGELOG.md](CHANGELOG.md).
+> See full release notes in [CHANGELOG.md](CHANGELOG.md) or browse step-by-step tutorials in the **[GitHub Wiki](https://github.com/samsularifin05/exceljs-next/wiki)**.
 
 [![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
 

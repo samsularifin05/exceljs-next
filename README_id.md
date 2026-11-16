@@ -4,7 +4,7 @@
 
 > **Tentang Repositori Ini:**
 > [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) merupakan *maintained fork* yang dimodernisasi dan diperkeras keamanannya dari repositori asli [exceljs/exceljs](https://github.com/exceljs/exceljs) (yang tidak lagi diperbarui sejak `v4.4.0` pada Januari 2024). Proyek ini menjaga 100% kompatibilitas API lama sekaligus memperbaiki celah keamanan (**0 vulnerabilities** di `npm audit`), bug streaming pada Node.js 16–22+, masalah korupsi file Excel, dukungan Native ESM & TypeScript penuh, serta menambahkan berbagai fitur baru.
-> Lihat rincian perubahan lengkap di [CHANGELOG.md](CHANGELOG.md).
+> Lihat rincian perubahan lengkap di [CHANGELOG.md](CHANGELOG.md) atau baca tutorial langkah demi langkah di **[GitHub Wiki](https://github.com/samsularifin05/exceljs-next/wiki)**.
 
 [![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
 

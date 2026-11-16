@@ -4,7 +4,7 @@
 
 > **关于本仓库：**
 > [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) 是基于原版 [exceljs/exceljs](https://github.com/exceljs/exceljs)（自 2024 年 1 月 `v4.4.0` 后停止更新）长期维护与安全加固的分支版本。在完全保持原有 API 向后兼容的同时，修复了高危安全漏洞（`npm audit` **0 漏洞**）、Node.js 16–22+ 流式读取问题、Excel 文件损坏隐患，完善了 TypeScript 与原生 ESM 支持，并新增了多项实用特性。
-> 完整更新日志请查看 [CHANGELOG.md](CHANGELOG.md)。
+> 完整更新日志请查看 [CHANGELOG.md](CHANGELOG.md)，分步教程请访问 **[GitHub Wiki](https://github.com/samsularifin05/exceljs-next/wiki)**。
 
 [![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
 

@@ -7,6 +7,12 @@
 - [4. Template Engine](Template-Engine)
 - [5. JSON & Auto-Fit](JSON-and-AutoFit)
 - [6. Pivot Tables & Streaming](Pivot-Tables-and-Streaming)
+- [7. Workbook & Worksheet Basics](Workbook-and-Worksheet-Basics)
+- [8. Styling & Number Formats](Styling-and-Number-Formats)
+- [9. Formulas & Data Validation](Formulas-and-Data-Validation)
+- [10. Tables, Conditional Formatting, & Media](Tables-Conditional-Formatting-and-Media)
+- [11. CSV & Browser Usage](CSV-and-Browser-Usage)
+- [12. Page Setup, AutoFilter, & Advanced](Page-Setup-AutoFilter-and-Advanced)
 
 ---
 

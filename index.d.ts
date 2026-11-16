@@ -1,3 +1,5 @@
+import { EventEmitter } from 'events';
+
 declare interface Buffer extends ArrayBuffer { }
 
 export declare enum RelationshipType {
@@ -2120,7 +2122,7 @@ export namespace stream {
 			options: WorkbookStreamReaderOptions;
 		}
 
-		class WorksheetReader extends import('events').EventEmitter {
+		class WorksheetReader extends EventEmitter {
 			id: number | string;
 			name: string;
 			state?: WorksheetState;

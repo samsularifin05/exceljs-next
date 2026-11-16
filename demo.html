@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>exceljs-next — Interactive Browser Demo &amp; Playground</title>
+  <script src="./dist/exceljs.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-elevated: #1e293b;
+      --surface-muted: #0f172a;
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(148, 163, 184, 0.32);
+      --text: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --muted: #94a3b8;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-soft: rgba(16, 185, 129, 0.14);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.14);
+      --danger: #f87171;
+      --danger-soft: rgba(239, 68, 68, 0.14);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.08), transparent 35%),
+        radial-gradient(circle at 85% 0%, rgba(56, 189, 248, 0.07), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      padding: 1.75rem 1.25rem 3.5rem;
+    }
+
+    code {
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84em;
+      background: rgba(148, 163, 184, 0.14);
+      color: #e2e8f0;
+      padding: 0.12rem 0.38rem;
+      border-radius: 5px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.15rem 1.4rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.03em;
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-top: 0.15rem;
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .badge {
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 0.32rem 0.72rem;
+      border-radius: 999px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    a.badge:hover {
+      border-color: var(--border-strong);
+      background: #273549;
+    }
+
+    .badge.green {
+      background: var(--primary-soft);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+
+    .badge.red {
+      background: var(--danger-soft);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: var(--danger);
+    }
+
+    /* Main Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-width: 0;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+      min-width: 0;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.15rem;
+    }
+
+    .card h2 {
+      font-size: 1.08rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: var(--text);
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: var(--primary-soft);
+      color: #34d399;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .card p.desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 0.3rem;
+    }
+
+    /* Feature Groups */
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .feature-group {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.05rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .feature-group:hover {
+      border-color: var(--border-strong);
+    }
+
+    .feature-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .feature-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .feature-hint {
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      padding-left: 1.6rem;
+    }
+
+    .feature-tag {
+      font-size: 0.69rem;
+      padding: 0.16rem 0.5rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      flex-shrink: 0;
+    }
+
+    .feature-body {
+      margin-top: 0.85rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .feature-body.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+      align-items: end;
+    }
+
+    .checkbox-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      align-items: center;
+    }
+
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    label.checkbox-label {
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      padding: 0.52rem 0.7rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Buttons */
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    @media (max-width: 560px) {
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 0.72rem 1rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #022c22;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: var(--surface-elevated);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: #293548;
+    }
+
+    .btn-sm {
+      padding: 0.38rem 0.75rem;
+      font-size: 0.78rem;
+    }
+
+    /* Status Banner */
+    .status-banner {
+      margin-top: 1rem;
+      padding: 0.75rem 0.95rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.84rem;
+      display: none;
+    }
+
+    .status-banner.show {
+      display: block;
+    }
+
+    .status-banner.ok {
+      background: var(--primary-soft);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+    }
+
+    .status-banner.err {
+      background: var(--danger-soft);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    /* Code Preview */
+    pre {
+      background: #070b14;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.1rem;
+      overflow: auto;
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.79rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      max-height: 360px;
+      tab-size: 2;
+    }
+
+    /* Dropzone & Inspector */
+    .dropzone {
+      border: 1.5px dashed var(--border-strong);
+      background: var(--surface-muted);
+      border-radius: var(--radius-md);
+      padding: 1.35rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .dropzone:hover,
+    .dropzone.dragover {
+      border-color: var(--primary);
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .dropzone-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+
+    .dropzone-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    .inspector-result {
+      display: none;
+      margin-top: 1.1rem;
+    }
+
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .meta-pill {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.24rem 0.6rem;
+      border-radius: 6px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .sheet-tabs {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.65rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sheet-tab {
+      padding: 0.38rem 0.8rem;
+      font-size: 0.8rem;
+      border-radius: 7px;
+      background: var(--surface-muted);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .sheet-tab:hover {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+
+    .sheet-tab.active {
+      background: var(--primary);
+      color: #022c22;
+      border-color: var(--primary);
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      max-height: 340px;
+      background: var(--surface-muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      border-right: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #0f172a;
+      color: #93c5fd;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:hover td {
+      background: rgba(148, 163, 184, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo-badge">XLS</div>
+        <div>
+          <h1>exceljs-next Playground</h1>
+          <div class="subtitle">Interactive Browser Demo &amp; Inspector — Maintained &amp; Security-Hardened Fork of ExcelJS</div>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="badge green" id="engineStatus">Checking ExcelJS...</span>
+        <span class="badge">v4.5.0</span>
+        <span class="badge">0 Vulnerabilities</span>
+        <a class="badge" href="https://github.com/samsularifin05/exceljs-next" target="_blank" rel="noopener">GitHub: samsularifin05/exceljs-next</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: GENERATOR & NEW FEATURES -->
+      <section class="card">
+        <div class="card-header">
+          <div>
+            <h2><span class="step-num">1</span> Generate &amp; Test Fitur <code>exceljs-next</code></h2>
+            <p class="desc">Pilih fitur yang ingin diuji, lalu klik <strong>Generate &amp; Download .xlsx</strong> atau langsung <strong>Generate &amp; Inspect</strong>.</p>
+          </div>
+        </div>
+
+        <div class="feature-list">
+          <!-- Feature 1: Auto-Fit Columns -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optAutoFit" checked />
+                <span>Auto-Fit Column Widths (<code>ws.autoFitColumns()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Menghitung lebar kolom otomatis berdasarkan isi sel, header, CJK/Unicode, dan ukuran font.</div>
+            <div class="feature-body" id="bodyAutoFit">
+              <div class="fields-grid">
+                <label class="field">
+                  Min Width
+                  <input type="number" id="optMinWidth" value="10" min="5" max="50" />
+                </label>
+                <label class="field">
+                  Max Width
+                  <input type="number" id="optMaxWidth" value="55" min="15" max="120" />
+                </label>
+                <label class="field">
+                  Padding (chars)
+                  <input type="number" id="optPadding" value="3" min="0" max="15" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 2: Enhanced Pivot Tables -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optPivot" checked />
+                <span>Enhanced Multi-Pivot Table (<code>ws.addPivotTable()</code>)</span>
+              </label>
+              <span class="feature-tag">ENHANCED</span>
+            </div>
+            <div class="feature-hint">Mendukung multi-pivot per workbook, 11 fungsi agregasi, multi-values, dan <code>sourceTable</code>.</div>
+            <div class="feature-body" id="bodyPivot">
+              <div class="fields-grid">
+                <label class="field">
+                  Metric (Agregasi)
+                  <select id="optPivotMetric">
+                    <option value="sum" selected>sum (Total)</option>
+                    <option value="average">average (Rata-rata)</option>
+                    <option value="max">max (Tertinggi)</option>
+                    <option value="min">min (Terendah)</option>
+                    <option value="count">count (Jumlah Data)</option>
+                    <option value="countNums">countNums (Jumlah Angka)</option>
+                    <option value="stdDev">stdDev (Standar Deviasi)</option>
+                    <option value="var">var (Varians)</option>
+                  </select>
+                </label>
+                <label class="field">
+                  Sumber Pivot
+                  <select id="optPivotSource">
+                    <option value="table" selected>sourceTable (Excel Table)</option>
+                    <option value="sheet">sourceSheet (Worksheet)</option>
+                  </select>
+                </label>
+              </div>
+              <div class="checkbox-row">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="optSecondPivot" checked />
+                  <span>Tambahkan Pivot Table ke-2 (Multi-Pivot)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 3: Column Page Breaks -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optColBreaks" checked />
+                <span>Column Page Breaks (<code>col.addPageBreak()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Memisahkan halaman cetak secara horizontal setelah kolom tertentu (<code>&lt;colBreaks&gt;</code>).</div>
+            <div class="feature-body" id="bodyColBreaks">
+              <div class="fields-grid">
+                <label class="field">
+                  Pisahkan Halaman Setelah Kolom
+                  <select id="optColBreakIndex">
+                    <option value="3" selected>Kolom C (Region)</option>
+                    <option value="4">Kolom D (Units)</option>
+                    <option value="5">Kolom E (Revenue)</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 4: Workbook & Sheet Protection -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optProtect" checked />
+                <span>Workbook &amp; Sheet Protection</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint"><code>workbook.protect()</code> mengunci struktur tab sheet (tambah/hapus/rename). Centang <code>ws.protect()</code> jika ingin mengunci edit sel.</div>
+            <div class="feature-body" id="bodyProtect">
+              <div class="fields-grid">
+                <label class="field">
+                  Password (SHA-512)
+                  <input type="text" id="optPassword" value="rahasia123" placeholder="Kosongkan jika tanpa password" />
+                </label>
+              </div>
+              <div class="checkbox-row">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="optLockStructure" checked />
+                  <span>Lock Workbook Structure</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="optLockWindows" />
+                  <span>Lock Windows</span>
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="optProtectSheet" />
+                  <span>Kunci Edit Sel (<code>ws.protect()</code>)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="btnDownload">⬇ Generate &amp; Download .xlsx</button>
+          <button class="btn-secondary" id="btnPreviewGenerated">🔍 Generate &amp; Inspect di Kanan</button>
+        </div>
+
+        <div id="statusBanner" class="status-banner"></div>
+      </section>
+
+      <!-- RIGHT: LIVE CODE & IN-BROWSER XLSX INSPECTOR -->
+      <div class="right-col">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2><span class="step-num">2</span> Live Code Snippet</h2>
+              <p class="desc">Kode JavaScript yang dijalankan otomatis sesuai konfigurasi Anda:</p>
+            </div>
+            <button class="btn-secondary btn-sm" id="btnCopyCode">Copy Code</button>
+          </div>
+          <pre id="codePreview"></pre>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2><span class="step-num">3</span> In-Browser XLSX Reader &amp; Inspector</h2>
+              <p class="desc">Uji pembacaan file <code>.xlsx</code> langsung di browser dengan <code>workbook.xlsx.load(buffer)</code>.</p>
+            </div>
+          </div>
+
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept=".xlsx" style="display: none;" />
+            <div class="dropzone-title">Klik untuk pilih file <code>.xlsx</code> atau tarik &amp; lepas ke sini</div>
+            <div class="dropzone-sub">Atau klik tombol "Generate &amp; Inspect di Kanan" pada panel kiri</div>
+          </div>
+
+          <div id="inspectorResult" class="inspector-result">
+            <div class="meta-pills" id="workbookMeta"></div>
+            <div class="sheet-tabs" id="sheetTabs"></div>
+            <div class="meta-pills" id="sheetMeta"></div>
+            <div class="table-wrap">
+              <table id="sheetTable"></table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById('engineStatus');
+    if (window.ExcelJS) {
+      statusEl.textContent = '✓ ExcelJS Browser Bundle Ready';
+    } else {
+      statusEl.textContent = '✗ dist/exceljs.min.js belum ter-load';
+      statusEl.classList.remove('green');
+      statusEl.classList.add('red');
+    }
+
+    const SAMPLE_DATA = [
+      ['TRX-1001', 'Laptop Pro 16" (日本語/CJK Ready)', 'Asia Pacific', 14, 28500000, 0, new Date('2026-01-15')],
+      ['TRX-1002', 'Mechanical Keyboard RGB', 'Europe', 42, 6300000, 0.05, new Date('2026-01-18')],
+      ['TRX-1003', '4K UltraSharp Monitor 32"', 'Asia Pacific', 19, 15200000, 0.1, new Date('2026-02-02')],
+      ['TRX-1004', 'Wireless Noise-Canceling Headset', 'North America', 65, 19500000, 0, new Date('2026-02-10')],
+      ['TRX-1005', 'USB-C Thunderbolt Dock Gen 4', 'Europe', 31, 9300000, 0.08, new Date('2026-02-19')],
+      ['TRX-1006', 'Laptop Pro 16" (日本語/CJK Ready)', 'North America', 22, 44000000, 0.12, new Date('2026-03-01')],
+    ];
+
+    function getOptions() {
+      return {
+        autoFit: document.getElementById('optAutoFit').checked,
+        minWidth: Number(document.getElementById('optMinWidth').value) || 10,
+        maxWidth: Number(document.getElementById('optMaxWidth').value) || 55,
+        padding: Number(document.getElementById('optPadding').value) || 3,
+        pivot: document.getElementById('optPivot').checked,
+        pivotMetric: document.getElementById('optPivotMetric').value,
+        pivotSource: document.getElementById('optPivotSource').value,
+        secondPivot: document.getElementById('optSecondPivot').checked,
+        colBreaks: document.getElementById('optColBreaks').checked,
+        colBreakIndex: Number(document.getElementById('optColBreakIndex').value) || 3,
+        protect: document.getElementById('optProtect').checked,
+        password: document.getElementById('optPassword').value,
+        lockStructure: document.getElementById('optLockStructure').checked,
+        lockWindows: document.getElementById('optLockWindows').checked,
+        protectSheet: document.getElementById('optProtectSheet').checked,
+      };
+    }
+
+    function syncSectionStates() {
+      const o = getOptions();
+      document.getElementById('bodyAutoFit').classList.toggle('disabled', !o.autoFit);
+      document.getElementById('bodyPivot').classList.toggle('disabled', !o.pivot);
+      document.getElementById('bodyColBreaks').classList.toggle('disabled', !o.colBreaks);
+      document.getElementById('bodyProtect').classList.toggle('disabled', !o.protect);
+    }
+
+    function updateCodePreview() {
+      syncSectionStates();
+      const o = getOptions();
+      const lines = [
+        `import ExcelJS from 'exceljs-next';`,
+        ``,
+        `const workbook = new ExcelJS.Workbook();`,
+        `const ws = workbook.addWorksheet('Sales Report');`,
+        ``,
+        `// 1. Buat Excel Table & Data Transaksi`,
+        `const salesTable = ws.addTable({`,
+        `  name: 'SalesTable',`,
+        `  ref: 'A1',`,
+        `  headerRow: true,`,
+        `  columns: [`,
+        `    { name: 'Invoice ID', filterButton: true },`,
+        `    { name: 'Product Name', filterButton: true },`,
+        `    { name: 'Region', filterButton: true },`,
+        `    { name: 'Units', filterButton: true },`,
+        `    { name: 'Revenue (IDR)', filterButton: true },`,
+        `    { name: 'Discount', filterButton: true },`,
+        `    { name: 'Order Date', filterButton: true },`,
+        `  ],`,
+        `  rows: sampleRows,`,
+        `});`,
+      ];
+
+      if (o.autoFit) {
+        lines.push(
+          ``,
+          `// 2. Auto-Fit Column Widths`,
+          `ws.autoFitColumns({ minWidth: ${o.minWidth}, maxWidth: ${o.maxWidth}, padding: ${o.padding} });`
+        );
+      }
+
+      if (o.colBreaks) {
+        lines.push(
+          ``,
+          `// 3. Column Page Breaks (<colBreaks>)`,
+          `ws.getColumn(${o.colBreakIndex}).addPageBreak(0, 1048575);`
+        );
+      }
+
+      if (o.pivot) {
+        lines.push(
+          ``,
+          `// 4. Enhanced Pivot Table (${o.pivotMetric} + multi-values)`,
+          `const pivotWs = workbook.addWorksheet('Pivot Summary');`,
+          `pivotWs.addPivotTable({`,
+          `  ${o.pivotSource === 'table' ? 'sourceTable: salesTable,' : 'sourceSheet: ws,'}`,
+          `  rows: ['Region', 'Product Name'],`,
+          `  columns: [],`,
+          `  values: ['Revenue (IDR)', 'Units'],`,
+          `  metric: '${o.pivotMetric}',`,
+          `});`
+        );
+        if (o.secondPivot) {
+          lines.push(
+            ``,
+            `// Multi-Pivot Table ke-2 dalam Workbook yang sama`,
+            `const pivotWs2 = workbook.addWorksheet('Pivot By Product');`,
+            `pivotWs2.addPivotTable({`,
+            `  sourceSheet: ws,`,
+            `  rows: ['Product Name'],`,
+            `  columns: ['Region'],`,
+            `  values: ['Units'],`,
+            `  metric: 'sum',`,
+            `});`
+          );
+        }
+      }
+
+      if (o.protect) {
+        lines.push(
+          ``,
+          `// 5. Workbook Structure Protection (SHA-512)`,
+          `await workbook.protect(${JSON.stringify(o.password)}, {`,
+          `  lockStructure: ${o.lockStructure},`,
+          `  lockWindows: ${o.lockWindows},`,
+          `});`
+        );
+        if (o.protectSheet) {
+          lines.push(
+            ``,
+            `// Kunci edit sel di worksheet 'Sales Report'`,
+            `await ws.protect(${JSON.stringify(o.password)}, {`,
+            `  selectLockedCells: true,`,
+            `  selectUnlockedCells: true,`,
+            `});`
+          );
+        }
+      }
+
+      document.getElementById('codePreview').textContent = lines.join('\n');
+    }
+
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', updateCodePreview);
+      el.addEventListener('change', updateCodePreview);
+    });
+    updateCodePreview();
+
+    async function buildDemoWorkbook() {
+      const o = getOptions();
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'exceljs-next Demo';
+      workbook.created = new Date();
+
+      const ws = workbook.addWorksheet('Sales Report', {
+        views: [{ state: 'frozen', ySplit: 1 }],
+      });
+
+      const salesTable = ws.addTable({
+        name: 'SalesTable',
+        ref: 'A1',
+        headerRow: true,
+        style: {
+          theme: 'TableStyleMedium9',
+          showRowStripes: true,
+        },
+        columns: [
+          { name: 'Invoice ID', filterButton: true },
+          { name: 'Product Name', filterButton: true },
+          { name: 'Region', filterButton: true },
+          { name: 'Units', filterButton: true },
+          { name: 'Revenue (IDR)', filterButton: true },
+          { name: 'Discount', filterButton: true },
+          { name: 'Order Date', filterButton: true },
+        ],
+        rows: SAMPLE_DATA,
+      });
+
+      for (let r = 2; r <= SAMPLE_DATA.length + 1; r++) {
+        ws.getCell(`E${r}`).numFmt = '"Rp"#,##0';
+        ws.getCell(`F${r}`).numFmt = '0.0%';
+        ws.getCell(`G${r}`).numFmt = 'yyyy-mm-dd';
+      }
+
+      const summaryRowIdx = SAMPLE_DATA.length + 3;
+      ws.getCell(`D${summaryRowIdx}`).value = 'Total Revenue:';
+      ws.getCell(`D${summaryRowIdx}`).font = { bold: true };
+      ws.getCell(`E${summaryRowIdx}`).value = {
+        formula: `SUM(E2:E${SAMPLE_DATA.length + 1})`,
+        result: SAMPLE_DATA.reduce((acc, row) => acc + row[4], 0),
+      };
+      ws.getCell(`E${summaryRowIdx}`).numFmt = '"Rp"#,##0';
+      ws.getCell(`E${summaryRowIdx}`).font = { bold: true, color: { argb: 'FF10B981' } };
+
+      if (o.autoFit) {
+        ws.autoFitColumns({
+          minWidth: o.minWidth,
+          maxWidth: o.maxWidth,
+          padding: o.padding,
+        });
+      }
+
+      if (o.colBreaks) {
+        ws.getColumn(o.colBreakIndex).addPageBreak(0, 1048575);
+      }
+
+      if (o.pivot) {
+        const pivotWs = workbook.addWorksheet('Pivot Summary');
+        pivotWs.addPivotTable({
+          ...(o.pivotSource === 'table' ? { sourceTable: salesTable } : { sourceSheet: ws }),
+          rows: ['Region', 'Product Name'],
+          columns: [],
+          values: ['Revenue (IDR)', 'Units'],
+          metric: o.pivotMetric,
+        });
+
+        if (o.secondPivot) {
+          const pivotWs2 = workbook.addWorksheet('Pivot By Product');
+          pivotWs2.addPivotTable({
+            sourceSheet: ws,
+            rows: ['Product Name'],
+            columns: ['Region'],
+            values: ['Units'],
+            metric: 'sum',
+          });
+        }
+      }
+
+      if (o.protect) {
+        await workbook.protect(o.password || undefined, {
+          lockStructure: o.lockStructure,
+          lockWindows: o.lockWindows,
+        });
+        if (o.protectSheet) {
+          await ws.protect(o.password || undefined, {
+            selectLockedCells: true,
+            selectUnlockedCells: true,
+          });
+        }
+      }
+
+      return workbook.xlsx.writeBuffer();
+    }
+
+    function showStatus(msg, isError = false) {
+      const banner = document.getElementById('statusBanner');
+      banner.textContent = msg;
+      banner.className = `status-banner show ${isError ? 'err' : 'ok'}`;
+    }
+
+    document.getElementById('btnDownload').addEventListener('click', async () => {
+      try {
+        const buffer = await buildDemoWorkbook();
+        const blob = new Blob([buffer], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'exceljs-next-demo.xlsx';
+        a.click();
+        URL.revokeObjectURL(url);
+        showStatus(`✓ File exceljs-next-demo.xlsx (${(buffer.byteLength / 1024).toFixed(1)} KB) berhasil dibuat & diunduh!`);
+        await inspectBuffer(buffer, 'exceljs-next-demo.xlsx');
+      } catch (err) {
+        showStatus(`✗ Gagal membuat file: ${err.message}`, true);
+      }
+    });
+
+    document.getElementById('btnPreviewGenerated').addEventListener('click', async () => {
+      try {
+        const buffer = await buildDemoWorkbook();
+        showStatus(`✓ Workbook berhasil di-generate di memori (${(buffer.byteLength / 1024).toFixed(1)} KB) dan dibuka di Inspector!`);
+        await inspectBuffer(buffer, 'Generated in-memory (.xlsx)');
+      } catch (err) {
+        showStatus(`✗ Gagal: ${err.message}`, true);
+      }
+    });
+
+    document.getElementById('btnCopyCode').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('codePreview').textContent);
+      const btn = document.getElementById('btnCopyCode');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Code'; }, 1500);
+    });
+
+    async function inspectBuffer(buffer, filename) {
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buffer);
+
+      document.getElementById('inspectorResult').style.display = 'block';
+
+      const wbMeta = document.getElementById('workbookMeta');
+      wbMeta.innerHTML = '';
+      const addPill = (container, text) => {
+        const span = document.createElement('span');
+        span.className = 'meta-pill';
+        span.textContent = text;
+        container.appendChild(span);
+      };
+
+      addPill(wbMeta, `File: ${filename}`);
+      addPill(wbMeta, `Sheets: ${wb.worksheets.length}`);
+      if (wb.workbookProtection) {
+        addPill(
+          wbMeta,
+          `🔒 Structure Protected (${wb.workbookProtection.algorithmName || 'No Hash'}, lockStructure=${!!wb.workbookProtection.lockStructure})`
+        );
+      } else {
+        addPill(wbMeta, `🔓 Structure Unprotected`);
+      }
+
+      const tabsEl = document.getElementById('sheetTabs');
+      tabsEl.innerHTML = '';
+      wb.worksheets.forEach((ws, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `sheet-tab ${idx === 0 ? 'active' : ''}`;
+        btn.textContent = ws.name;
+        btn.addEventListener('click', () => {
+          tabsEl.querySelectorAll('.sheet-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderSheet(ws);
+        });
+        tabsEl.appendChild(btn);
+      });
+
+      if (wb.worksheets[0]) {
+        renderSheet(wb.worksheets[0]);
+      }
+    }
+
+    function formatCellDisplay(cell) {
+      const val = cell.value;
+      if (val === null || val === undefined) return '';
+      if (val instanceof Date) return val.toISOString().slice(0, 10);
+      if (typeof val === 'object') {
+        if ('formula' in val) {
+          return `=${val.formula} → ${val.result !== undefined ? val.result : ''}`;
+        }
+        if (Array.isArray(val.richText)) {
+          return val.richText.map(t => t.text).join('');
+        }
+      }
+      return String(val);
+    }
+
+    function renderSheet(ws) {
+      const sheetMeta = document.getElementById('sheetMeta');
+      sheetMeta.innerHTML = '';
+      const addPill = text => {
+        const span = document.createElement('span');
+        span.className = 'meta-pill';
+        span.textContent = text;
+        sheetMeta.appendChild(span);
+      };
+
+      addPill(`Rows: ${ws.rowCount}`);
+      addPill(`Cols: ${ws.columnCount}`);
+      addPill(`Tables: ${ws.getTables().length}`);
+      addPill(`ColBreaks: ${(ws.colBreaks || []).length}`);
+      if (ws.sheetProtection && ws.sheetProtection.sheet) {
+        addPill(`🔒 Sheet Cells Protected`);
+      }
+
+      const widths = [];
+      for (let c = 1; c <= Math.min(ws.columnCount, 8); c++) {
+        const col = ws.getColumn(c);
+        if (col && col.width) {
+          widths.push(`${col.letter}:${col.width}`);
+        }
+      }
+      if (widths.length) {
+        addPill(`Widths: ${widths.join(', ')}`);
+      }
+
+      const tableEl = document.getElementById('sheetTable');
+      tableEl.innerHTML = '';
+
+      const maxCols = Math.max(ws.columnCount, 4);
+      const maxRows = Math.max(ws.rowCount, 5);
+
+      const thead = document.createElement('thead');
+      const headTr = document.createElement('tr');
+      const cornerTh = document.createElement('th');
+      cornerTh.textContent = '#';
+      headTr.appendChild(cornerTh);
+
+      for (let c = 1; c <= maxCols; c++) {
+        const th = document.createElement('th');
+        const col = ws.getColumn(c);
+        th.textContent = `${col.letter}${col.width ? ` (w:${col.width})` : ''}`;
+        headTr.appendChild(th);
+      }
+      thead.appendChild(headTr);
+      tableEl.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      for (let r = 1; r <= Math.min(maxRows, 25); r++) {
+        const row = ws.getRow(r);
+        const tr = document.createElement('tr');
+        const rowHeader = document.createElement('td');
+        rowHeader.style.color = '#64748b';
+        rowHeader.textContent = r;
+        tr.appendChild(rowHeader);
+
+        for (let c = 1; c <= maxCols; c++) {
+          const td = document.createElement('td');
+          const cell = row.getCell(c);
+          td.textContent = formatCellDisplay(cell);
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      tableEl.appendChild(tbody);
+    }
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', async e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        const buf = await file.arrayBuffer();
+        await inspectBuffer(buf, file.name);
+      }
+    });
+    fileInput.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (file) {
+        const buf = await file.arrayBuffer();
+        await inspectBuffer(buf, file.name);
+      }
+    });
+  </script>
+</body>
+</html>

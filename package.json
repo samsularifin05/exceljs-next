@@ -25,10 +25,15 @@
   "types": "./index.d.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
       "browser": "./dist/exceljs.min.js",
-      "import": "./excel.mjs",
-      "require": "./excel.js",
+      "import": {
+        "types": "./index.d.mts",
+        "default": "./excel.mjs"
+      },
+      "require": {
+        "types": "./index.d.ts",
+        "default": "./excel.js"
+      },
       "default": "./excel.js"
     },
     "./*": "./*"
@@ -42,7 +47,8 @@
     "README.md",
     "README_zh.md",
     "index.ts",
-    "index.d.ts"
+    "index.d.ts",
+    "index.d.mts"
   ],
   "scripts": {
     "test": "npm run test:full",

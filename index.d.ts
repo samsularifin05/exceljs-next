@@ -1210,6 +1210,36 @@ export interface Worksheet {
 	 */
 	autoFitColumns(options?: AutoFitColumnsOptions): this;
 
+	/**
+	 * Automatically adjust row heights based on cell contents, newlines, and wrapText
+	 */
+	autoFitRows(options?: AutoFitRowsOptions): this;
+
+	/**
+	 * Convert worksheet rows into an array of plain objects
+	 */
+	toJSON<T = Record<string, any>>(options?: ToJSONOptions): T[];
+
+	/**
+	 * Populate worksheet rows from an array of plain objects
+	 */
+	fromJSON(records: Record<string, any>[], options?: FromJSONOptions): this;
+
+	/**
+	 * Render {{placeholder}} and array loop rows in this worksheet template
+	 */
+	renderTemplate(data: Record<string, any>, options?: TemplateRenderOptions): this;
+
+	/**
+	 * Add a native Excel chart (column, bar, line, pie, doughnut, area)
+	 */
+	addChart(options: ChartOptions): ChartModel;
+
+	/**
+	 * Return all charts added to this worksheet
+	 */
+	getCharts(): ChartModel[];
+
 	rowBreaks: RowBreak[];
 	colBreaks: ColBreak[];
 
@@ -1499,11 +1529,75 @@ export interface JSZipGeneratorOptions {
 	};
 }
 
+export interface AutoFitRowsOptions {
+	minHeight?: number;
+	maxHeight?: number;
+	padding?: number;
+	onlyEmptyHeight?: boolean;
+}
+
+export interface ToJSONOptions {
+	headerRow?: number | false;
+	startRow?: number;
+	endRow?: number;
+	includeEmpty?: boolean;
+	raw?: boolean;
+}
+
+export interface FromJSONOptions {
+	headers?: string[];
+	headerLabels?: Record<string, string>;
+	includeHeader?: boolean;
+	headerStyle?: Partial<Style>;
+	autoFit?: boolean | AutoFitColumnsOptions;
+}
+
+export interface TemplateRenderOptions {
+	removeEmptyLoopRows?: boolean;
+}
+
+export type ChartType = 'column' | 'bar' | 'line' | 'pie' | 'doughnut' | 'area';
+
+export interface ChartSeries {
+	name?: string;
+	categories?: string;
+	values: string;
+	color?: string;
+}
+
+export interface ChartDataLabelsOptions {
+	showVal?: boolean;
+	showPercent?: boolean;
+	showCatName?: boolean;
+	showSerName?: boolean;
+	showLeaderLines?: boolean;
+	separator?: string;
+}
+
+export interface ChartOptions {
+	type?: ChartType;
+	title?: string;
+	grouping?: 'clustered' | 'stacked' | 'percentStacked' | 'standard';
+	legend?: { position?: 'r' | 'b' | 't' | 'l' | 'none' };
+	valAxis?: { numFmt?: string; majorUnit?: number };
+	dataLabels?: boolean | ChartDataLabelsOptions;
+	series: ChartSeries[];
+	range?: string | ImageRange;
+}
+
+export interface ChartModel extends ChartOptions {
+	range: ImageRange;
+}
+
 export interface XlsxReadOptions {
 	/**
 	 * The list of XML node names to ignore while parsing an XLSX file
 	 */
 	ignoreNodes: string[];
+	/**
+	 * Password for decrypting password-encrypted XLSX files (MS-OFFCRYPTO)
+	 */
+	password?: string;
 }
 
 export interface XlsxWriteOptions extends stream.xlsx.WorkbookWriterOptions {
@@ -1511,6 +1605,10 @@ export interface XlsxWriteOptions extends stream.xlsx.WorkbookWriterOptions {
 	 * The option passed to JsZip#generateAsync(options)
 	 */
 	zip: Partial<JSZipGeneratorOptions>;
+	/**
+	 * Password for encrypting the XLSX file (MS-OFFCRYPTO Agile Encryption)
+	 */
+	password?: string;
 }
 
 export interface Xlsx {
@@ -1828,6 +1926,8 @@ export class Workbook {
 	protect(password?: string, options?: Partial<WorkbookProtection>): Promise<void>;
 
 	unprotect(): void;
+
+	renderTemplate(data: Record<string, any>, options?: TemplateRenderOptions): this;
 }
 
 export class ModelContainer {

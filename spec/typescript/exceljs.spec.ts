@@ -77,4 +77,36 @@ describe('typescript', () => {
     wb.unprotect();
     expect(wb.workbookProtection).to.equal(null);
   });
+
+  it('supports autoFitRows, toJSON, fromJSON, and password-encrypted xlsx in typescript', async () => {
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Data');
+    ws.fromJSON([{ id: 1, name: 'Item A\nLine 2' }], { autoFit: true });
+    ws.autoFitRows({ minHeight: 18 });
+    const rows = ws.toJSON<{ id: number; name: string }>();
+    expect(rows[0].name).to.equal('Item A\nLine 2');
+
+    const encrypted = await wb.xlsx.writeBuffer({ password: 'ts-secret' });
+    const wb2 = new ExcelJS.Workbook();
+    await wb2.xlsx.load(encrypted, { password: 'ts-secret' });
+    expect(wb2.getWorksheet('Data').getCell('A2').value).to.equal(1);
+  });
+
+  it('supports renderTemplate and addChart in typescript', async () => {
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Template');
+    ws.getCell('A1').value = 'Hello {{user}}';
+    ws.getCell('A2').value = '{{items.name}}';
+    ws.getCell('B2').value = '{{items.val}}';
+    wb.renderTemplate({ user: 'Budi', items: [{ name: 'A', val: 10 }, { name: 'B', val: 20 }] });
+    ws.addChart({
+      type: 'line',
+      title: 'Trend',
+      range: 'D2:J14',
+      series: [{ name: 'Val', categories: '$A$2:$A$3', values: '$B$2:$B$3' }],
+    });
+    expect(ws.getCharts().length).to.equal(1);
+    const buf = await wb.xlsx.writeBuffer();
+    expect(buf.byteLength).to.be.greaterThan(0);
+  });
 });

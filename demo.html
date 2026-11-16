@@ -709,6 +709,101 @@
               </div>
             </div>
           </div>
+
+          <!-- Feature 5: File Encryption (Password to Open) -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optEncryptFile" />
+                <span>File Encryption — Password Buka File (<code>MS-OFFCRYPTO</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Mengenkripsi seluruh file <code>.xlsx</code> (AES-256 + SHA-512) sehingga Excel / WPS langsung meminta password saat file dibuka.</div>
+            <div class="feature-body" id="bodyEncryptFile">
+              <div class="fields-grid">
+                <label class="field">
+                  Password Buka File
+                  <input type="text" id="optFilePassword" value="buka123" placeholder="Password untuk membuka .xlsx" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 6: Auto-Fit Row Heights -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optAutoFitRows" checked />
+                <span>Auto-Fit Row Heights (<code>ws.autoFitRows()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Menghitung tinggi baris otomatis untuk teks multi-baris (<code>\n</code>), <code>wrapText</code>, dan ukuran font.</div>
+            <div class="feature-body" id="bodyAutoFitRows">
+              <div class="fields-grid">
+                <label class="field">
+                  Min Height (pt)
+                  <input type="number" id="optMinHeight" value="18" min="10" max="100" />
+                </label>
+                <label class="field">
+                  Padding (pt)
+                  <input type="number" id="optRowPadding" value="4" min="0" max="30" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature 7: fromJSON / toJSON -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optFromJson" checked />
+                <span>JSON Import &amp; Export (<code>ws.fromJSON()</code> / <code>ws.toJSON()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Membuat sheet baru <code>JSON Users</code> langsung dari array of objects dan membaca kembali lewat <code>ws.toJSON()</code> di Inspector.</div>
+          </div>
+
+          <!-- Feature 8: Template Engine -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optTemplate" checked />
+                <span>Template Engine (<code>ws.renderTemplate()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Mengisi placeholder <code>{{invoiceNo}}</code> &amp; mengekspansi baris array <code>{{items.name}}</code> pada sheet <code>Invoice Template</code>.</div>
+          </div>
+
+          <!-- Feature 9: Native Excel Charts -->
+          <div class="feature-group">
+            <div class="feature-header">
+              <label class="feature-title">
+                <input type="checkbox" id="optChart" checked />
+                <span>Native Excel Charts (<code>ws.addChart()</code>)</span>
+              </label>
+              <span class="feature-tag">NEW</span>
+            </div>
+            <div class="feature-hint">Menyisipkan grafik native Excel langsung di sebelah tabel data pada sheet <code>Sales Report</code>.</div>
+            <div class="feature-body" id="bodyChart">
+              <div class="fields-grid">
+                <label class="field">
+                  Tipe Chart
+                  <select id="optChartType">
+                    <option value="column" selected>Column Chart</option>
+                    <option value="bar">Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                    <option value="area">Area Chart</option>
+                    <option value="pie">Pie Chart</option>
+                    <option value="doughnut">Doughnut Chart</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="actions">
@@ -746,13 +841,25 @@
             <div class="dropzone-sub">Atau klik tombol "Generate &amp; Inspect di Kanan" pada panel kiri</div>
           </div>
 
+          <div class="fields-grid" style="margin-top: 0.75rem;">
+            <label class="field">
+              Password Dekripsi (jika file .xlsx terenkripsi)
+              <input type="text" id="optDecryptPassword" value="buka123" placeholder="Opsional — diisi jika file terkunci password" />
+            </label>
+          </div>
+
           <div id="inspectorResult" class="inspector-result">
             <div class="meta-pills" id="workbookMeta"></div>
             <div class="sheet-tabs" id="sheetTabs"></div>
             <div class="meta-pills" id="sheetMeta"></div>
-            <div class="table-wrap">
+            <div class="checkbox-row" style="margin-bottom: 0.65rem;">
+              <button class="sheet-tab active" id="viewModeTable" type="button">📊 Table Preview</button>
+              <button class="sheet-tab" id="viewModeJson" type="button">{ } Output <code>ws.toJSON()</code></button>
+            </div>
+            <div class="table-wrap" id="tableWrap">
               <table id="sheetTable"></table>
             </div>
+            <pre id="jsonOutput" style="display: none; max-height: 340px;"></pre>
           </div>
         </section>
       </div>
@@ -795,6 +902,15 @@
         lockStructure: document.getElementById('optLockStructure').checked,
         lockWindows: document.getElementById('optLockWindows').checked,
         protectSheet: document.getElementById('optProtectSheet').checked,
+        encryptFile: document.getElementById('optEncryptFile').checked,
+        filePassword: document.getElementById('optFilePassword').value,
+        autoFitRows: document.getElementById('optAutoFitRows').checked,
+        minHeight: Number(document.getElementById('optMinHeight').value) || 18,
+        rowPadding: Number(document.getElementById('optRowPadding').value) || 4,
+        fromJson: document.getElementById('optFromJson').checked,
+        template: document.getElementById('optTemplate').checked,
+        chart: document.getElementById('optChart').checked,
+        chartType: document.getElementById('optChartType').value,
       };
     }
 
@@ -804,6 +920,9 @@
       document.getElementById('bodyPivot').classList.toggle('disabled', !o.pivot);
       document.getElementById('bodyColBreaks').classList.toggle('disabled', !o.colBreaks);
       document.getElementById('bodyProtect').classList.toggle('disabled', !o.protect);
+      document.getElementById('bodyEncryptFile').classList.toggle('disabled', !o.encryptFile);
+      document.getElementById('bodyAutoFitRows').classList.toggle('disabled', !o.autoFitRows);
+      document.getElementById('bodyChart').classList.toggle('disabled', !o.chart);
     }
 
     function updateCodePreview() {
@@ -897,6 +1016,70 @@
             `});`
           );
         }
+      }
+
+      if (o.fromJson) {
+        lines.push(
+          ``,
+          `// 6. Populate Sheet dari JSON (ws.fromJSON) & Auto-Fit Rows`,
+          `const jsonWs = workbook.addWorksheet('JSON Users');`,
+          `jsonWs.fromJSON(`,
+          `  [`,
+          `    { name: 'Alice', role: 'Admin', note: 'Lead Engineer\\nJakarta' },`,
+          `    { name: 'Bob', role: 'Finance', note: 'Audit & Payroll' },`,
+          `  ],`,
+          `  { headerLabels: { name: 'Nama', role: 'Role', note: 'Catatan' }, autoFit: true }`,
+          `);`
+        );
+      }
+
+      if (o.autoFitRows) {
+        lines.push(
+          ``,
+          `// 7. Auto-Fit Row Heights (ws.autoFitRows)`,
+          `ws.autoFitRows({ minHeight: ${o.minHeight}, padding: ${o.rowPadding} });`
+        );
+      }
+
+      if (o.template) {
+        lines.push(
+          ``,
+          `// 8. Template Engine ({{placeholder}} & array row loop)`,
+          `tplWs.renderTemplate({`,
+          `  invoiceNo: 'INV-2026-001',`,
+          `  customer: { name: 'PT Nusantara Digital' },`,
+          `  items: [`,
+          `    { name: 'Cloud Server', qty: 2, price: 4500000 },`,
+          `    { name: 'Managed DB', qty: 1, price: 3200000 },`,
+          `  ],`,
+          `});`
+        );
+      }
+
+      if (o.chart) {
+        lines.push(
+          ``,
+          `// 9. Native Excel Chart (${o.chartType})`,
+          `ws.addChart({`,
+          `  type: '${o.chartType}',`,
+          `  title: 'Revenue by Product',`,
+          `  range: 'I2:S20',`,
+          `  legend: { position: 'b' },`,
+          `  valAxis: { numFmt: '#,##0,," Jt"' },`,
+          `  dataLabels: { showVal: true, showPercent: true },`,
+          `  series: [{ name: 'Revenue', categories: '$B$2:$B$7', values: '$E$2:$E$7', color: '#10B981' }],`,
+          `});`
+        );
+      }
+
+      if (o.encryptFile && o.filePassword) {
+        lines.push(
+          ``,
+          `// 8. File Encryption — Password Buka File (MS-OFFCRYPTO AES-256)`,
+          `const buffer = await workbook.xlsx.writeBuffer({ password: ${JSON.stringify(o.filePassword)} });`
+        );
+      } else {
+        lines.push(``, `const buffer = await workbook.xlsx.writeBuffer();`);
       }
 
       document.getElementById('codePreview').textContent = lines.join('\n');
@@ -1001,7 +1184,83 @@
         }
       }
 
-      return workbook.xlsx.writeBuffer();
+      if (o.fromJson) {
+        const jsonWs = workbook.addWorksheet('JSON Users');
+        jsonWs.fromJSON(
+          [
+            { name: 'Alice', role: 'Admin', score: 98, note: 'Lead Engineer\nJakarta HQ' },
+            { name: 'Bob', role: 'Finance', score: 91, note: 'Payroll & Audit\nShift Pagi' },
+            { name: 'Citra', role: 'Analyst', score: 95, note: 'Pivot & Reporting' },
+          ],
+          {
+            headerLabels: { name: 'Nama', role: 'Role', score: 'Skor', note: 'Catatan' },
+            headerStyle: {
+              font: { bold: true, color: { argb: 'FFFFFFFF' } },
+              fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0F766E' } },
+            },
+            autoFit: true,
+          }
+        );
+        if (o.autoFitRows) {
+          jsonWs.autoFitRows({ minHeight: o.minHeight, padding: o.rowPadding });
+        }
+      }
+
+      if (o.autoFitRows) {
+        ws.autoFitRows({ minHeight: o.minHeight, padding: o.rowPadding });
+      }
+
+      if (o.template) {
+        const tplWs = workbook.addWorksheet('Invoice Template');
+        tplWs.getCell('A1').value = 'Invoice #{{invoiceNo}}';
+        tplWs.getCell('A1').font = { bold: true, size: 14 };
+        tplWs.getCell('A2').value = 'Customer: {{customer.name}}';
+        tplWs.getCell('A4').value = 'Item';
+        tplWs.getCell('B4').value = 'Qty';
+        tplWs.getCell('C4').value = 'Harga';
+        ['A4', 'B4', 'C4'].forEach(ref => {
+          tplWs.getCell(ref).font = { bold: true };
+        });
+        tplWs.getCell('A5').value = '{{items.$number}}. {{items.name}}';
+        tplWs.getCell('B5').value = '{{items.qty}}';
+        tplWs.getCell('C5').value = '{{items.price}}';
+        tplWs.getCell('C5').numFmt = '"Rp"#,##0';
+
+        tplWs.renderTemplate({
+          invoiceNo: 'INV-2026-001',
+          customer: { name: 'PT Nusantara Digital' },
+          items: [
+            { name: 'Cloud Server Pro', qty: 2, price: 4500000 },
+            { name: 'Managed Database', qty: 1, price: 3200000 },
+            { name: 'SSL Wildcard', qty: 3, price: 850000 },
+          ],
+        });
+        if (o.autoFit) {
+          tplWs.autoFitColumns({ minWidth: 12, maxWidth: 45, padding: 3 });
+        }
+      }
+
+      if (o.chart) {
+        ws.addChart({
+          type: o.chartType,
+          title: 'Revenue by Product',
+          range: 'I2:S20',
+          legend: { position: 'b' },
+          valAxis: { numFmt: '#,##0,," Jt"' },
+          dataLabels: { showVal: true, showPercent: true, separator: '\n' },
+          series: [
+            {
+              name: 'Revenue (IDR)',
+              categories: '$B$2:$B$7',
+              values: '$E$2:$E$7',
+              color: '#10B981',
+            },
+          ],
+        });
+      }
+
+      const writeOpts = o.encryptFile && o.filePassword ? { password: o.filePassword } : undefined;
+      return workbook.xlsx.writeBuffer(writeOpts);
     }
 
     function showStatus(msg, isError = false) {
@@ -1046,9 +1305,35 @@
       setTimeout(() => { btn.textContent = 'Copy Code'; }, 1500);
     });
 
+    let activeInspectorSheet = null;
+    let inspectorMode = 'table';
+
+    document.getElementById('viewModeTable').addEventListener('click', () => {
+      inspectorMode = 'table';
+      document.getElementById('viewModeTable').classList.add('active');
+      document.getElementById('viewModeJson').classList.remove('active');
+      if (activeInspectorSheet) renderSheet(activeInspectorSheet);
+    });
+
+    document.getElementById('viewModeJson').addEventListener('click', () => {
+      inspectorMode = 'json';
+      document.getElementById('viewModeJson').classList.add('active');
+      document.getElementById('viewModeTable').classList.remove('active');
+      if (activeInspectorSheet) renderSheet(activeInspectorSheet);
+    });
+
     async function inspectBuffer(buffer, filename) {
+      const o = getOptions();
+      const decryptPass =
+        document.getElementById('optDecryptPassword').value ||
+        (o.encryptFile ? o.filePassword : '');
       const wb = new ExcelJS.Workbook();
-      await wb.xlsx.load(buffer);
+      try {
+        await wb.xlsx.load(buffer, decryptPass ? { password: decryptPass } : undefined);
+      } catch (err) {
+        showStatus(`✗ Gagal membaca file di Inspector: ${err.message}`, true);
+        return;
+      }
 
       document.getElementById('inspectorResult').style.display = 'block';
 
@@ -1063,6 +1348,9 @@
 
       addPill(wbMeta, `File: ${filename}`);
       addPill(wbMeta, `Sheets: ${wb.worksheets.length}`);
+      if (o.encryptFile && o.filePassword) {
+        addPill(wbMeta, `🔐 File Encrypted (MS-OFFCRYPTO AES-256)`);
+      }
       if (wb.workbookProtection) {
         addPill(
           wbMeta,
@@ -1107,6 +1395,7 @@
     }
 
     function renderSheet(ws) {
+      activeInspectorSheet = ws;
       const sheetMeta = document.getElementById('sheetMeta');
       sheetMeta.innerHTML = '';
       const addPill = text => {
@@ -1135,6 +1424,19 @@
         addPill(`Widths: ${widths.join(', ')}`);
       }
 
+      const tableWrap = document.getElementById('tableWrap');
+      const jsonOutput = document.getElementById('jsonOutput');
+
+      if (inspectorMode === 'json') {
+        tableWrap.style.display = 'none';
+        jsonOutput.style.display = 'block';
+        jsonOutput.textContent = JSON.stringify(ws.toJSON(), null, 2);
+        return;
+      }
+
+      tableWrap.style.display = 'block';
+      jsonOutput.style.display = 'none';
+
       const tableEl = document.getElementById('sheetTable');
       tableEl.innerHTML = '';
 
@@ -1162,7 +1464,7 @@
         const tr = document.createElement('tr');
         const rowHeader = document.createElement('td');
         rowHeader.style.color = '#64748b';
-        rowHeader.textContent = r;
+        rowHeader.textContent = row.height ? `${r} (h:${row.height})` : String(r);
         tr.appendChild(rowHeader);
 
         for (let c = 1; c <= maxCols; c++) {

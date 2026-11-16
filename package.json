@@ -17,7 +17,7 @@
     "url": "https://github.com/samsularifin05/exceljs-next.git"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   },
   "main": "./excel.js",
   "module": "./excel.mjs",

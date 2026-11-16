@@ -1,16 +1,20 @@
 {
-  "name": "exceljs",
-  "version": "4.4.0",
-  "description": "Excel Workbook Manager - Read and Write xlsx and csv Files.",
+  "name": "exceljs-next",
+  "version": "4.5.0",
+  "description": "Excel Workbook Manager - Read and Write xlsx and csv Files (Maintained & Security-Hardened Fork of exceljs).",
   "private": false,
   "license": "MIT",
   "author": {
     "name": "Guyon Roche",
     "email": "guyon@live.com"
   },
+  "homepage": "https://github.com/samsularifin05/exceljs-next#readme",
+  "bugs": {
+    "url": "https://github.com/samsularifin05/exceljs-next/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/exceljs/exceljs.git"
+    "url": "https://github.com/samsularifin05/exceljs-next.git"
   },
   "engines": {
     "node": ">=18.0.0"

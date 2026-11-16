@@ -1,10 +1,10 @@
-# ExcelJS (Maintained & Security-Hardened Fork)
+# exceljs-next
 
 > **About This Repository:**
-> Project ini merupakan *maintained fork* dari repositori asli [exceljs/exceljs](https://github.com/exceljs/exceljs) (yang terakhir dikembangkan pada Januari 2024 / `v4.4.0`). Fork ini dibuat untuk memperbaiki celah keamanan (*prototype pollution*, *DoS/OOM*, dan *dependency vulnerabilities*), memperbaiki bug pembacaan/penulisan file di Node.js modern (Node 18/20/22+), mencegah korupsi file Excel, menyempurnakan dukungan TypeScript & ESM, serta menambahkan fitur-fitur baru tanpa mengubah logic API yang sudah berjalan.
+> [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) merupakan *maintained fork* dari repositori asli [exceljs/exceljs](https://github.com/exceljs/exceljs) (yang terakhir dikembangkan pada Januari 2024 / `v4.4.0`). Fork ini dibuat untuk memperbaiki celah keamanan (*prototype pollution*, *DoS/OOM*, dan *dependency vulnerabilities*), memperbaiki bug pembacaan/penulisan file di Node.js modern (Node 18/20/22+), mencegah korupsi file Excel, menyempurnakan dukungan TypeScript & ESM, serta menambahkan fitur-fitur baru tanpa mengubah logic API yang sudah berjalan.
 > Lihat detail lengkap perubahan di [CHANGELOG.md](CHANGELOG.md).
 
-[![Build Status](https://github.com/exceljs/exceljs/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/exceljs/exceljs/actions/workflows/tests.yml)
+[![Build Status](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml/badge.svg?branch=master&event=push)](https://github.com/samsularifin05/exceljs-next/actions/workflows/tests.yml)
 
 Read, manipulate and write spreadsheet data and styles to XLSX and JSON.
 
@@ -20,7 +20,7 @@ Reverse engineered from Excel spreadsheet files as a project.
   * `worksheet.autoFitColumns(options)` — Auto-calculate column widths from cell contents, headers, and font size.
   * `column.addPageBreak(top, bottom)` & `worksheet.colBreaks` — Full column page break support.
   * `await workbook.protect(password, options)` & `workbook.unprotect()` — Workbook structure & window protection.
-* **Native ESM & Accurate TypeScript Definitions:** Added `excel.mjs` (`import ExcelJS, { Workbook } from '...'`) and updated `index.d.ts` to match runtime APIs.
+* **Native ESM & Accurate TypeScript Definitions:** Added `excel.mjs` (`import ExcelJS, { Workbook } from 'exceljs-next'`) and updated `index.d.ts` to match runtime APIs.
 
 # Translations
 
@@ -29,7 +29,13 @@ Reverse engineered from Excel spreadsheet files as a project.
 # Installation
 
 ```shell
-npm install exceljs
+npm install exceljs-next
+```
+
+Atau sebagai *drop-in replacement* tanpa perlu mengubah kode `require('exceljs')` / `import ... from 'exceljs'` yang sudah ada:
+
+```shell
+npm install exceljs@npm:exceljs-next
 ```
 
 # New Features!

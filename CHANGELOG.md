@@ -1,6 +1,6 @@
-# Changelog (Maintained Fork)
+# Changelog — `exceljs-next`
 
-> **Note:** This repository is a maintained and security-hardened fork of the original [exceljs/exceljs](https://github.com/exceljs/exceljs) (which has been inactive since v4.4.0 in January 2024). It retains 100% backward compatibility with the original API while fixing critical security vulnerabilities, Node.js 18/20/22+ streaming bugs, Excel file corruption issues, TypeScript definitions, and adding long-requested features.
+> **Note:** [samsularifin05/exceljs-next](https://github.com/samsularifin05/exceljs-next) is a maintained and security-hardened fork of the original [exceljs/exceljs](https://github.com/exceljs/exceljs) (which has been inactive since `v4.4.0` in January 2024). It retains 100% backward compatibility with the original API while fixing critical security vulnerabilities, Node.js 18/20/22+ streaming bugs, Excel file corruption issues, TypeScript definitions, and adding long-requested features.
 
 ---
 

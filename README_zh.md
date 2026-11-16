@@ -188,7 +188,6 @@ npm install exceljs@npm:exceljs-next
     </ul>
   </li>
   <li><a href="#配置">配置</a></li>
-  <li><a href="#已知的问题">已知的问题</a></li>
 </ul>
 
 
@@ -2686,68 +2685,11 @@ worksheet.getCell('A2').value = { error: '#VALUE!' };
 | Excel.ErrorValue.Value         | #VALUE!     |
 | Excel.ErrorValue.Num           | #NUM!       |
 
-# 接口变化[⬆](#目录)<!-- Link generated with jump2header -->
+---
 
-我们会尽一切努力创建一个良好的，一致的接口，该接口不会在版本之间不兼容，但令人遗憾的是，为了实现更大的利益，有时需要进行一些更改。
+# 原作者与致谢
 
-## 0.1.0[⬆](#目录)<!-- Link generated with jump2header -->
+* **原项目与原作者：** 基于由 **Guyon Roche**（`guyon@live.com`）及其开源贡献者创建的 [exceljs/exceljs](https://github.com/exceljs/exceljs) 项目。
+* **维护分支（`exceljs-next`）：** 安全加固、Node.js 16–22+ 兼容、TypeScript/ESM 支持及新功能由 **[samsularifin05](https://github.com/samsularifin05)** 维护。
+* **许可证：** [MIT](LICENSE)
 
-### Worksheet.eachRow[⬆](#目录)<!-- Link generated with jump2header -->
-
-在 `Worksheet.eachRow` 的回调函数中的参数已被交换和更改；它是 `function(rowNumber，rowValues)`，现在是 `function(row，rowNumber)`，使它的外观更像 *underscore(`_.each`)方法，并且行对象优先于行号。*
-
-### Worksheet.getRow[⬆](#目录)<!-- Link generated with jump2header -->
-
-此函数已从返回稀疏的单元格数组更改为返回 `Row` 对象。这样可以访问行属性，并有助于管理行样式等。
-
-仍可通过 `Worksheet.getRow(rowNumber).values;` 获得稀疏的单元格值的数组。
-
-## 0.1.1[⬆](#目录)<!-- Link generated with jump2header -->
-
-### cell.model[⬆](#目录)<!-- Link generated with jump2header -->
-
-`cell.styles` 重命名为 `cell.style`
-
-## 0.2.44[⬆](#目录)<!-- Link generated with jump2header -->
-
-从 Bluebird 切换到 Node 原生 Promise 的函数返回的 Promise 如果依赖 Bluebird 的额外功能，则可能会破坏调用代码。
-
-为了减少这种情况的出现，在0.3.0中添加了以下两个更改：
-
-* 默认情况下使用功能更全且仍与浏览器兼容的 promise lib。 该库支持 Bluebird 的许多功能，但占用空间少得多。
-* 注入其他 Promise 实现的选项。有关更多详细信息，请参见<a href="#配置">配置</a>部分。
-
-
-
-# 配置[⬆](#目录)<!-- Link generated with jump2header -->
-
-ExcelJS现在支持对 Promise 库的依赖项注入。您可以通过在模块中包含以下代码来还原 Bluebird Promise。
-
-```javascript
-ExcelJS.config.setValue('promise', require('bluebird'));
-```
-
-请注意：我已经使用 bluebird 专门测试了 ExcelJS（直到最近，这是它使用的库）。根据我所做的测试，它不适用于 Q。
-
-# 注意事项[⬆](#目录)<!-- Link generated with jump2header -->
-
-## Dist 文件夹[⬆](#目录)<!-- Link generated with jump2header -->
-
-在发布此模块之前，先对源代码进行编译和其他处理，然后再将它们放置在 *dist/* 文件夹中。该自述文件标识两个文件-浏览器捆绑和压缩版本。除了在 package.json 中指定为  `"main"` 的文件外，不能保证 *dist/* 文件夹的其他内容。
-
-
-# 已知的问题[⬆](#目录)<!-- Link generated with jump2header -->
-
-## 使用 Puppeteer 进行测试[⬆](#目录)<!-- Link generated with jump2header -->
-
-该 lib 中包含的测试套件包括一个在无头浏览器中执行的小脚本，以验证捆绑的软件包。 在撰写本文时，其表现出该测试在 Windows Linux 子系统中不能很好地进行。
-
-因此，可以通过存在名为 *.disable-test-browser* 的文件来禁用浏览器测试。
-
-```bash
-sudo apt-get install libfontconfig
-```
-
-## 拼接与合并[⬆](#目录)<!-- Link generated with jump2header -->
-
-如果任何 `splice` 操作影响合并的单元格，则合并组将无法正确移动

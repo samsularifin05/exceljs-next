@@ -366,6 +366,13 @@ await wb.xlsx.writeFile('ts-output.xlsx', { password: '123' });
 
 ---
 
+## Pengembang Asli & Kredit
+
+* **Proyek & Pengembang Asli:** Dibangun di atas repositori asli [exceljs/exceljs](https://github.com/exceljs/exceljs) yang dibuat oleh **Guyon Roche** (`guyon@live.com`) beserta seluruh kontributornya.
+* **Maintained Fork (`exceljs-next`):** Pembaruan keamanan, kompatibilitas Node.js 16–22+, dukungan TypeScript/ESM, serta fitur-fitur baru dikelola oleh **[samsularifin05](https://github.com/samsularifin05)**.
+
+---
+
 ## Lisensi
 
 [MIT](LICENSE)

@@ -230,7 +230,6 @@ To be clear, all contributions added to this library will be included in the lib
     </ul>
   </li>
   <li><a href="#config">Config</a></li>
-  <li><a href="#known-issues">Known Issues</a></li>
 </ul>
 
 # Importing[⬆](#contents)<!-- Link generated with jump2header -->
@@ -2860,75 +2859,11 @@ The current valid Error text values are:
 | Excel.ErrorValue.Value         | #VALUE!     |
 | Excel.ErrorValue.Num           | #NUM!       |
 
-# Interface Changes[⬆](#contents)<!-- Link generated with jump2header -->
+---
 
-Every effort is made to make a good consistent interface that doesn't break through the versions but regrettably, now and then some things have to change for the greater good.
+# Credits & Original Author
 
-## 0.1.0[⬆](#contents)<!-- Link generated with jump2header -->
+* **Original Project & Author:** Built upon [exceljs/exceljs](https://github.com/exceljs/exceljs) created by **Guyon Roche** (`guyon@live.com`) and its open-source contributors.
+* **Maintained Fork (`exceljs-next`):** Security hardening, Node.js 16–22+ compatibility, TypeScript/ESM updates, and new features maintained by **[samsularifin05](https://github.com/samsularifin05)**.
+* **License:** [MIT](LICENSE)
 
-### Worksheet.eachRow[⬆](#contents)<!-- Link generated with jump2header -->
-
-The arguments in the callback function to Worksheet.eachRow have been swapped and changed; it was function(rowNumber,rowValues), now it is function(row, rowNumber) which gives it a look and feel more like the underscore (_.each) function and priorities the row object over the row number.
-
-### Worksheet.getRow[⬆](#contents)<!-- Link generated with jump2header -->
-
-This function has changed from returning a sparse array of cell values to returning a Row object. This enables accessing row properties and will facilitate managing row styles and so on.
-
-The sparse array of cell values is still available via Worksheet.getRow(rowNumber).values;
-
-## 0.1.1[⬆](#contents)<!-- Link generated with jump2header -->
-
-### cell.model[⬆](#contents)<!-- Link generated with jump2header -->
-
-cell.styles renamed to cell.style
-
-## 0.2.44[⬆](#contents)<!-- Link generated with jump2header -->
-
-Promises returned from functions switched from Bluebird to native node Promise which can break calling code
- if they rely on Bluebird's extra features.
-
-To mitigate this the following two changes were added to 0.3.0:
-
-* A more fully featured and still browser compatible promise lib is used by default. This lib supports many of the features of Bluebird but with a much lower footprint.
-* An option to inject a different Promise implementation. See <a href="#config">Config</a> section for more details.
-
-# Config[⬆](#contents)<!-- Link generated with jump2header -->
-
-ExcelJS now supports dependency injection for the promise library.
- You can restore Bluebird promises by including the following code in your module...
-
-```javascript
-ExcelJS.config.setValue('promise', require('bluebird'));
-```
-
-Please note: I have tested ExcelJS with bluebird specifically (since up until recently this was the library it used).
- From the tests I have done it will not work with Q.
-
-# Caveats[⬆](#contents)<!-- Link generated with jump2header -->
-
-## Dist Folder[⬆](#contents)<!-- Link generated with jump2header -->
-
-Before publishing this module, the source code is transpiled and otherwise processed
-before being placed in a dist/ folder.
-This README identifies two files - a browserified bundle and minified version.
-No other contents of the dist/ folder are guaranteed in any way other than the file
-specified as "main" in the package.json
-
-
-# Known Issues[⬆](#contents)<!-- Link generated with jump2header -->
-
-## Testing with Puppeteer[⬆](#contents)<!-- Link generated with jump2header -->
-
-The test suite included in this lib includes a small script executed in a headless browser
-to validate the bundled packages. At the time of this writing, it appears that
-this test does not play nicely in the Windows Linux subsystem.
-
-For this reason, the browser test can be disabled by the existence of a file named .disable-test-browser
-
-```bash
-sudo apt-get install libfontconfig
-```
-
-## Splice vs Merge[⬆](#contents)<!-- Link generated with jump2header -->
-
-If any splice operation affects a merged cell, the merge group will not be moved correctly

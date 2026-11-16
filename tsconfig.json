@@ -4,13 +4,7 @@
     "moduleResolution": "node",
     "target": "es2018",
     "sourceMap": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "types": [
-      "node",
-      "mocha"
-    ]
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",

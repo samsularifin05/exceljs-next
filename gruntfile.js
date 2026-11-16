@@ -1,5 +1,20 @@
 'use strict';
 
+const fs = require('fs');
+
+if (!process.env.PUPPETEER_EXECUTABLE_PATH) {
+  const chromePaths = [
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/usr/bin/google-chrome',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+  ];
+  const foundChrome = chromePaths.find(p => fs.existsSync(p));
+  if (foundChrome) {
+    process.env.PUPPETEER_EXECUTABLE_PATH = foundChrome;
+  }
+}
+
 module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-browserify');
